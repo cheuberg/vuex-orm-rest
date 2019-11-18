@@ -34,7 +34,12 @@ export default async function fetchAll({
   function fetchAPI() {
     return new Promise(async (resolve, reject) => {
       const path = joinPath(...relations.map(r => r.apiPath()), self.apiPath);
-      const data = await get(path, { params: filter });
+      let data;
+      try {
+        data = await get(path, { params: filter });
+      } catch (error) {
+        reject(error);
+      }
       try {
         const insertedData = replace ? await self.create(data) : await self.insertOrUpdate(data);
         resolve(insertedData[self.entity]);
